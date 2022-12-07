@@ -13,7 +13,7 @@ module load conda/4.9.2/modulefile
 conda activate rasp
 
 #Bioinfo03 and 04
-/usr/local/miniconda3/bin/conda #init
+/usr/local/miniconda3/bin/conda
 conda activate rasp
 
 ########### RUNNING ##############
@@ -23,7 +23,7 @@ python run_RaSP.py [flags]
 # -i [INPUT FILE]
 
 #There are three modes of running RaSP:
-#	1) with a unniprot id to download the AlphaFold model
+#	1) with a uniprot id to download the AlphaFold model
 #	2) with a PDB id to download a PDB model
 #	3) with a file name to run RaSP on an existing PDB file.
 
@@ -101,7 +101,7 @@ P62942,A,M1H,10,6,3.785956884138847,3.772712370515455,0.23301259,0.0215552052103
 #This file contains much more information than we need. The mutation is available in 
 #the variant column and the esitmated ddG is available in the score_ml column. 
 
-#To post process this file and convert to mutatex and rosetta compatible formating you 
+#To post process this file and convert to mutatex and rosetta compatible formatting you 
 #can use: 
 
 #python postprocess_RaSP.py -i cavity_pred_{identifier}_{chain}.csv
