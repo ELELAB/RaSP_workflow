@@ -1,5 +1,5 @@
 # RaSP_workflow
-See guides in docs for Bioinfo01, 03, and 04 specific gudies. 
+See guides in docs for Bioinfo01, 03, and 04 specific guides. 
 
 ## Installation
 
@@ -18,11 +18,11 @@ git clone https://github.com/ELELAB/RaSP_workflow.git
 ### INSTALL DEPENDENCY PACKAGES
 
 ```
-conda install --channel defaults conda python=3.7 --yes &> /dev/null
-conda update --channel defaults --all --yes &> /dev/null
-pip install numpy==1.17.3 torch==1.2.0 biopython==1.72 matplotlib==3.1.1 pdb-tools &> /dev/null
+conda install --channel defaults conda python=3.7 --yes
+conda update --channel defaults --all --yes
+pip install numpy==1.17.3 torch==1.2.0 biopython==1.72 matplotlib==3.1.1 pdb-tools
 pip install --upgrade pdb-tools &> /dev/null
-conda install  mpl-scatter-density pdbfixer=1.5 openmm=7.3.1 -c omnia -c conda-forge -c anaconda -c defaults --yes &> /dev/null
+conda install  mpl-scatter-density pdbfixer=1.5 openmm=7.3.1 -c omnia -c conda-forge -c anaconda -c defaults --yes
 conda install -c anaconda scikit-learn
 conda install -c conda-forge pyyaml
 pip install ptitprince==0.2.6
@@ -48,7 +48,7 @@ $ python run_RaSP.py [flags]
 
 ```
 There are three modes of running RaSP:
-	1) with a unniprot id to download the AlphaFold model
+	1) with a uniprot id to download the AlphaFold model
 	2) with a PDB id to download a PDB model
 	3) with a file name to run RaSP on an existing PDB file.
 
@@ -79,14 +79,12 @@ using the -v version flag. This is optional. Per default version 4.
 
 ```
 RaSP have two runtypes, cpu and cuda. Cuda is a gpu type. 
-When running on bioinfo01 always use cpu or leave the flag
-out since the default is cpu. When running on bioinfo03 or 04 
-use cuda, since this will speed up the process. 
+
 ```
 
 ### Output
 
-After a successfull run, the output files are deposited: 
+After a successful run, the output files are deposited: 
 
 ```
 output/predictions/
@@ -103,7 +101,7 @@ output/predictions/cavity_pred_P62942_A.csv
 output/predictions/prism_cavity_P62942_A.txt 
 ```
 
-To see the esitmated ddG, we examine the csv file: 
+To see the estimated ddG, we examine the csv file: 
 ```
 pdbid,chainid,variant,wt_idx,mt_idx,wt_nlf,mt_nlf,score_ml_fermi,score_ml,pos,wt_AA,mt_AA,wt
 P62942,A,M1A,10,0,3.785956884138847,2.4839824262174384,0.2559438,0.33210336415230135,1,M,A,M
@@ -117,7 +115,7 @@ P62942,A,M1H,10,6,3.785956884138847,3.772712370515455,0.23301259,0.0215552052103
 
 The mutation is available in the variant column and the esitmated ddG is available in the score_ml column. 
 
-To post process this file and convert to mutatex and rosetta compatible formating you can use: 
+To post process this file and convert to mutatex and rosetta compatible formatting you can use: 
 
 ```
 $ python postprocess_RaSP.py -i cavity_pred_{identifier}_{chain}.csv
@@ -127,3 +125,4 @@ e.g.:
 ```
 $ python postprocess_RaSP.py -i output/predictions/cavity_pred_P62942_A.csv
 ```
+The output will also be available in output/predictions/.
