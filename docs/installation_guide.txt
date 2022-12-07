@@ -14,11 +14,11 @@ git clone https://github.com/ELELAB/RaSP_workflow.git
 
 ############# INSTALL DEPENDENCIES ##############
 #Packages
-conda install --channel defaults conda python=3.7 --yes &> /dev/null
-conda update --channel defaults --all --yes &> /dev/null
-pip install numpy==1.17.3 torch==1.2.0 biopython==1.72 matplotlib==3.1.1 pdb-tools &> /dev/null
-pip install --upgrade pdb-tools &> /dev/null
-conda install  mpl-scatter-density pdbfixer=1.5 openmm=7.3.1 -c omnia -c conda-forge -c anaconda -c defaults --yes &> /dev/null
+conda install --channel defaults conda python=3.7 --yes
+conda update --channel defaults --all --yes
+pip install numpy==1.17.3 torch==1.2.0 biopython==1.72 matplotlib==3.1.1 pdb-tools
+pip install --upgrade pdb-tools
+conda install  mpl-scatter-density pdbfixer=1.5 openmm=7.3.1 -c omnia -c conda-forge -c anaconda -c defaults --yes
 conda install -c anaconda scikit-learn
 conda install -c conda-forge pyyaml
 pip install ptitprince==0.2.6
