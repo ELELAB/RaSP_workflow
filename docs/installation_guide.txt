@@ -1,0 +1,35 @@
+########### INITIATE ENVIRONMENT ###############
+#Bioinfo01
+module load conda/4.9.2/modulefile
+conda create --name rasp
+conda activate rasp
+
+#Bioinfo03 and 04
+/usr/local/miniconda3/bin/conda
+conda create --name rasp
+conda activate rasp
+
+############# GET FILES ########################
+git clone https://github.com/ELELAB/RaSP_workflow.git
+
+############# INSTALL DEPENDENCIES ##############
+#Packages
+conda install --channel defaults conda python=3.7 --yes
+conda update --channel defaults --all --yes
+pip install numpy==1.17.3 torch==1.2.0 biopython==1.72 matplotlib==3.1.1 pdb-tools
+pip install --upgrade pdb-tools
+conda install  mpl-scatter-density pdbfixer=1.5 openmm=7.3.1 -c omnia -c conda-forge -c anaconda -c defaults --yes
+conda install -c anaconda scikit-learn
+conda install -c conda-forge pyyaml
+pip install ptitprince==0.2.6
+
+#github repository
+cd src/pdb_parser_scripts
+git clone https://github.com/rlabduke/reduce.git
+cd reduce/
+make &> /dev/null
+cd ../../../
+chmod +x src/pdb_parser_scripts/reduce/reduce 
+
+########## INSTALLATION DONE ##################
+
