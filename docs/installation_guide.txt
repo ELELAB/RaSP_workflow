@@ -9,6 +9,15 @@ conda activate rasp
 conda create --name rasp
 conda activate rasp
 
+#for both bioinfo01, 03 and 04.
+
+#Notice, conda will download the environment in your home directory by default. 
+#This can be an issue if you are limited on space. To overcome this, use the 
+#-p flag in creation, XX indicates your username. 
+
+#conda create -p /data/user/XX/rasp
+#activate /data/user/XX/rasp
+
 ############# GET FILES ########################
 git clone https://github.com/ELELAB/RaSP_workflow.git
 
@@ -27,7 +36,8 @@ pip install ptitprince==0.2.6
 cd src/pdb_parser_scripts
 git clone https://github.com/rlabduke/reduce.git
 cd reduce/
-make &> /dev/null
+make 
+mv reduce_src/reduce .
 cd ../../../
 chmod +x src/pdb_parser_scripts/reduce/reduce 
 
