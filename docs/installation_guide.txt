@@ -1,13 +1,32 @@
 ########### INITIATE ENVIRONMENT ###############
 #Bioinfo01
 module load conda/4.9.2/modulefile
+#create the environment, using the following command will
+#create the environmenrt in your home. 
 conda create --name rasp
+
+#if you need to create it elsewhere, for example
+#due to space restructions, use: (user = your server name)
+conda create --name /data/user/{user}/rasp
+
 conda activate rasp
+#or 
+conda activate /data/user/{user}/rasp
 
 #Bioinfo03 and 04
 /usr/local/miniconda3/bin/conda
+
+#create the environment, using the following command will
+#create the environmenrt in your home. 
 conda create --name rasp
+
+#if you need to create it elsewhere, for example 
+#due to space restructions, use: (user = your server name)
+conda create --name /data/user/{user}/rasp
+
 conda activate rasp
+#or 
+conda activate /data/user/{user}/rasp
 
 ############# GET FILES ########################
 git clone https://github.com/ELELAB/RaSP_workflow.git
@@ -23,13 +42,17 @@ conda install -c anaconda scikit-learn
 conda install -c conda-forge pyyaml
 pip install ptitprince==0.2.6
 
-#github repository
+#Reduce package
+#you need the reduce package:
 cd src/pdb_parser_scripts
 git clone https://github.com/rlabduke/reduce.git
 cd reduce/
 make &> /dev/null
 cd ../../../
 chmod +x src/pdb_parser_scripts/reduce/reduce 
+#check that is is done correctly by seeing that 
+#the executable "reduce" is available in
+#the directory reduce.
 
 ########## INSTALLATION DONE ##################
 

@@ -16,10 +16,30 @@ conda activate rasp
 /usr/local/miniconda3/bin/conda
 conda activate rasp
 
+#activaton depends on your personal environment.
+
 ########### RUNNING ##############
-python run_RaSP.py [flags]
+
+#to limit the core use, you need
+#to specify your run in rasp_bash.sh
+
+./rasp [flags]
+
+#Notice that this bash script contains
+# the number of cores, and the command
+# which is basically the following:
+#python run_RaSP.py [flags]
 
 ########## FLAGS ##################
+# -n [CORES]
+
+# This number will limit the number of cores
+# if you do not do this, all available cores
+# will be used.
+
+#ex. -i 4
+#ex. -i 8
+
 # -i [INPUT FILE]
 
 #There are three modes of running RaSP:
@@ -52,26 +72,32 @@ python run_RaSP.py [flags]
 # out since the default is cpu. When running on bioinfo03 or 04 
 # use cuda, since this will speed up the process. 
 
+#-p [PATH]
+
+# The directory containing the RaSP scripts, model and all additional
+# data, can be specified using the command -p. Per default this is
+# ./src, but can be changed to any other path. 
+
 ############ EXAMPLES #######################
 
 #ALPHAFOLD MODELS
-tsp -N 1 python run_RaSP.py -i P62942 -c A -v 4 -r cpu
+./rasp -n 1 -i P62942 -c A -v 4 -r cpu
 
 #or since this specify default settings: 
 
-tsp -N 1 python run_RaSP.py -i P62942 -c A
+./rasp -n 1 -i P62942 -c A
 
 #Alternatively on bioinfo03 or 04
 
-tsp -N 1 python run_RaSP.py -i P62942 -c A -r cuda
+./rasp -n 1 -i P62942 -c A -r cuda
 
 #PDB ID
 
-tsp -N 1 python run_RaSP.py -i 2XWR -c B -r cuda
+./rasp -n 1 -i 2XWR -c B -r cuda
 
 #EXISTING PDB
 
-tsp -N 1 python run_RaSP -i trimmed_ulk1.pdb -c A -r cuda
+./rasp -n 1 -i trimmed_ulk1.pdb -c A -r cuda
 
 ########## UNDERSTANDING THE OUTPUT ################
 
@@ -109,4 +135,5 @@ P62942,A,M1H,10,6,3.785956884138847,3.772712370515455,0.23301259,0.0215552052103
 #e.g.:
 
 python postprocess_RaSP.py -i output/predictions/cavity_pred_P62942_A.csv
+
 

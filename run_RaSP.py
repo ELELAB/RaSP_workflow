@@ -1,61 +1,30 @@
 import sys
-#sys.path.append("/usr/local/lib/python3.7/site-packages")
 import glob
 import os
 import random
-#import pathlib
 import subprocess
 import numpy as np
 import pandas as pd
 import torch
 import time
 import datetime
-#import matplotlib
-#from pdbfixer import PDBFixer
-#from simtk.openmm.app import PDBFile
 from Bio.PDB.Polypeptide import index_to_one, one_to_index
-#from collections import OrderedDict
-#from torch.utils.data import DataLoader, Dataset
-#import yaml
 import argparse
-
-#from google.colab import files
-sys.path.append('./src/')
-
-from cavity_model import (
-     CavityModel,
-     DownstreamModel,
-#     ResidueEnvironment,
-     ResidueEnvironmentsDataset,
-)
-
-from helpers import (
-#     populate_dfs_with_resenvs,
-#     remove_disulfides,
-#     fermi_transform,
-#     inverse_fermi_transform,
-     init_lin_weights,
-     ds_pred,
-     cavity_to_prism,
-     get_seq_from_variant,
-)
-
-#from visualization import (
-#     hist_plot,
-#)
 
 # prepare parameters
 parser = argparse.ArgumentParser(prog = "RaSP_workflow",
-                                 usage = 'RaSP_workflow [-h] help')
+                                 usage = 'RaSP_workflow [-h] help.')
 
 parser.add_argument("-i", '--input',
                     metavar = 'input pdb or code',
+                    required=True,
                     type=str,
                     help='The name of the input pdb, either a file or a AF (uniprot) or PDB code')
 
 parser.add_argument("-c", '--chain',
                     metavar = 'chain for saturation mutagenesis',
                     type=str,
+                    required=True,
                     help='The chain to be analyzed')
 
 parser.add_argument("-v", '--version',
@@ -70,12 +39,37 @@ parser.add_argument("-r", "--runtype",
                     default = 'cpu',
                     help="RaSP can run on either cuda or cpu")
 
+parser.add_argument("-p", "--path",
+                    metavar = "Path to program",
+                    type=str,
+                    default="./src/",
+                    help="Add the path for the RaSP scripts")
+
+# to be updated based on new location
+
+
 args = parser.parse_args()
 
 pdb_input = args.input
+path = args.path
+sys.path.append(path)
+
+from cavity_model import (
+     CavityModel, #in use
+     DownstreamModel, #in use
+     ResidueEnvironmentsDataset,#in use
+)
+
+from helpers import (
+     init_lin_weights, #in use
+     ds_pred, #in use
+     cavity_to_prism,#in use
+     get_seq_from_variant, #in use
+)
+
 
 if pdb_input[-4:].lower() == '.pdb':
-    PDB_custom = pdb_input
+    PDB_custom = pdb_input[:-4]
 else: PDB_custom = ''
 
 if len(pdb_input) == 4:
@@ -89,9 +83,9 @@ else: AF_ID = ''
 version = int(args.version)
 
 chain = args.chain
+uniquechain = chain
 
 runtype = args.runtype
-
 
 # Setup pipeline with parameters
 ## Set seeds
@@ -111,35 +105,47 @@ NUM_ENSEMBLE = 10
 TASK_ID = int(1)
 PER_TASK = int(1)
 
-#clean up
-if os.path.exists("query_protein.pdb"):
-    os.remove("query_protein.pdb")
-if os.path.exists("data/test/predictions/raw/query_protein_uniquechain.pdb"):
-    os.remove("data/test/predictions/raw/query_protein_uniquechain.pdb")
-if os.path.exists("data/test/predictions/cleaned/query_protein_uniquechain_clean.pdb"):
-    os.remove("data/test/predictions/cleaned/query_protein_uniquechain_clean.pdb")
-if os.path.exists("data/test/predictions/parsed/query_protein_uniquechain_clean_coordinate_features.npz"):
-    os.remove("data/test/predictions/parsed/query_protein_uniquechain_clean_coordinate_features.npz")
+if not os.path.exists('data'): 
+    os.makedirs('data')
+if not os.path.exists('data/predictions'):
+    os.makedirs('data/predictions')
+if not os.path.exists('data/predictions/raw'):
+    os.makedirs('data/predictions/raw')
+if not os.path.exists('data/predictions/cleaned'):
+    os.makedirs('data/predictions/cleaned')
+if not os.path.exists('data/predictions/parsed'):
+    os.makedirs('data/predictions/parsed')
+if not os.path.exists('data/input'): 
+    os.makedirs('data/input')
 
 #load pdb
 if (AF_ID !=''): 
-    subprocess.call(['curl','-s','-f',f'https://alphafold.ebi.ac.uk/files/AF-{AF_ID}-F1-model_v{version}.pdb','-o','query_protein.pdb'])
+    subprocess.call(['curl','-s','-f',f'https://alphafold.ebi.ac.uk/files/AF-{AF_ID}-F1-model_v{version}.pdb','-o', f'data/input/{AF_ID}.pdb']) #'query_protein.pdb'])
+    query_protein = f"{AF_ID}"
     print("ALPHAFOLD downloaded")
 elif (PDB_ID !=''):
-    subprocess.call(['curl','-s','-f',f'https://files.rcsb.org/download/{PDB_ID}.pdb','-o','query_protein.pdb'])
+    subprocess.call(['curl','-s','-f',f'https://files.rcsb.org/download/{PDB_ID}.pdb','-o', f'data/input/{PDB_ID}.pdb'])#'query_protein.pdb'])
+    query_protein = f"{PDB_ID}"
     print("PDB downloaded")
 
 elif PDB_custom:
-  os.rename(PDB_custom, "query_protein.pdb")
-  print('PDB file correctly loaded')
-
+    if os.path.exists(f'data/input/{PDB_custom}.pdb'):
+        query_protein = f"{PDB_custom}"
+        print('PDB file correctly loaded')
+    elif os.path.exists(f'{PDB_custom}.pdb'):
+        os.system(f"mv {PDB_custom}.pdb data/input/{PDB_custom}.pdb")
+        query_protein = f"{PDB_custom}"
+        print('PDB file correctly loaded')
+    else:
+        sys.exit('PDB upload failed, check naming and placement of file')
 else:
-  print('ERROR: Please select input')
+  sys.exit('ERROR: Please select input')
 
-os.system(f"pdb_selchain -{chain} query_protein.pdb | pdb_delhetatm | pdb_delres --999:0:1 | pdb_fixinsert | pdb_tidy  > data/test/predictions/raw/query_protein_uniquechain.pdb")
 
-pdb_input_dir = "data/test/predictions/raw/"
-input_pdbs = sorted(list(filter(lambda x: x.endswith(".pdb"), os.listdir('data/test/predictions/raw/'))))
+os.system(f"pdb_selchain -{chain} data/input/{query_protein}.pdb | pdb_delhetatm | pdb_delres --999:0:1 | pdb_fixinsert | pdb_tidy  > data/predictions/raw/{query_protein}_{uniquechain}.pdb")
+
+pdb_input_dir = "data/predictions/raw/"
+input_pdbs = sorted(list(filter(lambda x: x.endswith(".pdb"), os.listdir('data/predictions/raw/'))))
 start = (TASK_ID-1)*(PER_TASK)
 end = (TASK_ID*PER_TASK)
 if end > len(input_pdbs):
@@ -148,10 +154,10 @@ pdbs = input_pdbs[start:end]
 pdb_names = [i.split(".")[0] for i in pdbs]
 print("Pre-processing PDBs ...")
 
-os.system("python src/pdb_parser_scripts/clean_pdb.py --pdb_file_in data/test/predictions/raw/query_protein_uniquechain.pdb --out_dir data/test/predictions/cleaned/ --reduce_exe src/pdb_parser_scripts/reduce/reduce") #&> /dev/null
-os.system("python src/pdb_parser_scripts/extract_environments.py --pdb_in data/test/predictions/cleaned/query_protein_uniquechain_clean.pdb  --out_dir data/test/predictions/parsed/")  #&> /dev/null
+os.system(f"python {path}/pdb_parser_scripts/clean_pdb.py --pdb_file_in data/predictions/raw/{query_protein}_{uniquechain}.pdb --out_dir data/predictions/cleaned/ --reduce_exe {path}/pdb_parser_scripts/reduce/reduce --path {path}") #&> /dev/null
+os.system(f"python {path}/pdb_parser_scripts/extract_environments.py --pdb_in data/predictions/cleaned/{query_protein}_{uniquechain}_clean.pdb  --out_dir data/predictions/parsed/")  #&> /dev/null
 
-if os.path.exists("data/test/predictions/parsed/query_protein_uniquechain_clean_coordinate_features.npz"):
+if os.path.exists(f"data/predictions/parsed/{query_protein}_{uniquechain}_clean_coordinate_features.npz"):
   print("Pre-processing PDBs correctly ended")
 else:
   print("Pre-processing PDB didn't end correcly, please check input informations")
@@ -159,22 +165,15 @@ else:
 
 print("#################### PREPARE RUN #####################")
 
-pdb_filenames_ds = sorted(glob.glob("data/test/predictions/parsed/*coord*"))
+pdb_filenames_ds = sorted(glob.glob("data/predictions/parsed/*coord*"))
 
 dataset_structure = ResidueEnvironmentsDataset(pdb_filenames_ds, transformer=None)
 
 resenv_dataset = {}
 
 for resenv in dataset_structure:
-    if AF_ID!='':
-      key = (f"--{AF_ID}--{resenv.chain_id}--{resenv.pdb_residue_number}--{index_to_one(resenv.restype_index)}--"
-          )
-    elif PDB_ID!='':
-      key = (f"--{PDB_ID}--{resenv.chain_id}--{resenv.pdb_residue_number}--{index_to_one(resenv.restype_index)}--"
-          )
-    else:
-      key = (f"--{'CUSTOM'}--{resenv.chain_id}--{resenv.pdb_residue_number}--{index_to_one(resenv.restype_index)}--"
-          )
+    key = (f"--{query_protein}--{resenv.chain_id}--{resenv.pdb_residue_number}--{index_to_one(resenv.restype_index)}--"
+        )
     resenv_dataset[key] = resenv
 
     
@@ -197,20 +196,22 @@ df_structure.drop(columns="index", inplace=True)
 
 
 # Load PDB amino acid frequencies used to approximate unfolded states
-pdb_nlfs = -np.log(np.load("data/pdb_frequencies.npz")["frequencies"])
-#pdb_nlfs = -np.log(np.load(f"{os.getcwd()}/data/pdb_frequencies.npz")["frequencies"])
+pdb_nlfs = -np.log(np.load(f"{path}/pdb_frequencies.npz")["frequencies"])
 
 # # Add wt and mt idxs and freqs to df
-
 df_structure["wt_idx"] = df_structure.apply(lambda row: one_to_index(row["variant"][0]), axis=1)
 df_structure["mt_idx"] = df_structure.apply(lambda row: one_to_index(row["variant"][-1]), axis=1)
 df_structure["wt_nlf"] = df_structure.apply(lambda row: pdb_nlfs[row["wt_idx"]], axis=1)
 df_structure["mt_nlf"] = df_structure.apply(lambda row: pdb_nlfs[row["mt_idx"]], axis=1)
 
 # Define models
-best_cavity_model_path = open("output/cavity_models/best_model_path.txt", "r").read()
+best_cavity_model_path = open(f"{path}/cavity_models/best_model_path.txt", "r").read()
 #added line
-best_cavity_model_path = best_cavity_model_path.split("/content/")[1][:-1]
+best_cavity_model_path = best_cavity_model_path.split("/content/output/")[1][:-1]
+best_cavity_model_path = f"{path}/{best_cavity_model_path}"
+
+print("best cavity model path")
+print(best_cavity_model_path)
 
 cavity_model_net = CavityModel(get_latent=True).to(DEVICE)
 
@@ -241,6 +242,7 @@ df_ml = ds_pred(cavity_model_net,
                 dataset_key,
                 NUM_ENSEMBLE, #10
                 DEVICE, #cpu
+                path,
                 ) 
 
 print("Finished downstream model prediction")
@@ -253,9 +255,13 @@ print("Generating output files")
 #Merge and save data with predictions
 
 df_total = df_structure.merge(df_ml, on=['pdbid','chainid','variant'], how='outer')
-#df_total["b_factors"] = df_total.apply(lambda row: row["resenv"].b_factors, axis=1)
 df_total = df_total.drop("resenv", 1)
 print(f"{len(df_structure)-len(df_ml)} data points dropped when matching total data with ml predictions in: {dataset_key}.")
+
+if not os.path.exists('output'): 
+    os.makedirs('output')
+if not os.path.exists(f'output/{dataset_key}'): 
+    os.makedirs(f'output/{dataset_key}')
 
 # Parse output into separate files by pdb, print to PRISM format
 for pdbid in df_total["pdbid"].unique():
@@ -277,9 +283,5 @@ for pdbid in df_total["pdbid"].unique():
 
 # End timer and print result
 elapsed = datetime.timedelta(seconds = end_time - start_time)
-if PDB_custom != '':
-    os.rename("query_protein.pdb", PDB_custom)
-if os.path.exists("query_protein.pdb"):
-    os.remove("query_protein.pdb")
 print("Complete - files generated")
 

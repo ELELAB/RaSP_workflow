@@ -1,0 +1,38 @@
+#!/bin/bash
+
+#define all the flags
+while getopts n:i:c:v:r:p flag
+do
+    case "${flag}" in
+        n) nthreads=${OPTARG};;
+        i) input=${OPTARG};;
+        c) chain=${OPTARG};;
+        v) version=${OPTARG};;
+        r) runtype=${OPTARG};;
+        p) path=${OPTARG};;
+    esac
+done
+
+#define the optional flags
+#this solution could be much nicer
+if [ -z "$version" ]
+then
+   version=4
+fi
+
+if [ -z "$runtype" ]
+then
+   runtype="cpu"
+fi
+
+if [ -z "$path" ]
+then
+   path="./src/"
+fi
+
+#here the important part of the script: Restrict the core use
+export OMP_NUM_THREADS=$nthreads
+
+#The command
+tsp -N $nthreads python run_RaSP.py -i $input -c $chain -v $version -r $runtype -p $path
+
