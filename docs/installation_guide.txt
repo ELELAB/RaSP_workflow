@@ -7,7 +7,7 @@ conda create --name rasp
 
 #if you need to create it elsewhere, for example
 #due to space restructions, use: (user = your server name)
-conda create --name /data/user/{user}/rasp
+conda create -p /data/user/{user}/rasp
 
 conda activate rasp
 #or 
@@ -22,7 +22,7 @@ conda create --name rasp
 
 #if you need to create it elsewhere, for example 
 #due to space restructions, use: (user = your server name)
-conda create --name /data/user/{user}/rasp
+conda create --p /data/user/{user}/rasp
 
 conda activate rasp
 #or 
@@ -44,10 +44,11 @@ pip install ptitprince==0.2.6
 
 #Reduce package
 #you need the reduce package:
-cd src/pdb_parser_scripts
+cd RaSP_workflow/src/pdb_parser_scripts
 git clone https://github.com/rlabduke/reduce.git
 cd reduce/
-make &> /dev/null
+make
+mv reduce_src/reduce .
 cd ../../../
 chmod +x src/pdb_parser_scripts/reduce/reduce 
 #check that is is done correctly by seeing that 
