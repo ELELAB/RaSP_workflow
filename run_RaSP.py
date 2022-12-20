@@ -278,8 +278,8 @@ for pdbid in df_total["pdbid"].unique():
         df_chain = df_chain.assign(mt_AA = df_chain["variant"].str[-1])
         seq = get_seq_from_variant(df_chain)
         df_chain.to_csv(pred_outfile, index=False)
-        prism_outfile = f"output/{dataset_key}/prism_cavity_{pdbid}_{chainid}.txt"
-        cavity_to_prism(df_chain, pdbid, chainid, seq, prism_outfile)
+#        prism_outfile = f"output/{dataset_key}/prism_cavity_{pdbid}_{chainid}.txt"
+#        cavity_to_prism(df_chain, pdbid, chainid, seq, prism_outfile)
 
 # End timer and print result
 elapsed = datetime.timedelta(seconds = end_time - start_time)
