@@ -4,6 +4,25 @@ This guide is a broad generic use.
 Notice that the bash script rasp is only relevant for users of 
 bioinfo01, 03 and 04.
 
+##RaSP - The original Tool
+
+### citation:
+```
+Rapid protein stability prediction using deep learning representations
+Lasse M. Blaabjerg, Maher M. Kassem, Lydia L. Good, Nicolas Jonsson, Matteo Cagiada, Kristoffer E. Johansson, Wouter Boomsma, Amelie Stein, Kresten Lindorff-Larsen
+bioRxiv 2022.07.14.500157; doi: https://doi.org/10.1101/2022.07.14.500157 
+```
+The scripts to re-run the paper and data can be found at
+```
+https://github.com/KULL-Centre/papers/tree/main/2022/ML-ddG-Blaabjerg-et-al
+```
+The tool can be run directly at
+```
+https://colab.research.google.com/github/KULL-Centre/papers/blob/main/2022/ML-ddG-Blaabjerg-et-al/RaSPLab.ipynb
+```
+
+Below is the installation and use guides for a free standing version of RaSP:
+
 ## Installation
 
 ### Using conda 
@@ -19,26 +38,25 @@ git clone https://github.com/ELELAB/RaSP_workflow.git
 ```
 
 ### INSTALL DEPENDENCY PACKAGES
-
 ```
 conda install --channel defaults conda python=3.7 --yes
 conda update --channel defaults --all --yes
-pip install numpy==1.17.3 torch==1.2.0 biopython==1.72 matplotlib==3.1.1 pdb-tools
-pip install --upgrade pdb-tools &> /dev/null
-conda install  mpl-scatter-density pdbfixer=1.5 openmm=7.3.1 -c omnia -c conda-forge -c anaconda -c defaults --yes
-conda install -c anaconda scikit-learn
-conda install -c conda-forge pyyaml
-pip install ptitprince==0.2.6
+pip install numpy==1.17.3 pandas=1.3.5 torch==1.2.0 biopython==1.72 pdb-tools
+pip install --upgrade pdb-tools
+conda install pdbfixer=1.5 openmm=7.3.1 -c omnia -c conda-forge -c anaconda -c defaults --yes
+conda install -c anaconda scikit-learn=1.0.2
 ```
 
 ### CLONE ADDITIONAL DEPENDENCIES
 ```
-cd src/pdb_parser_scripts
+cd RaSP_workflow/src/pdb_parser_scripts
 git clone https://github.com/rlabduke/reduce.git
 cd reduce/
-make &> /dev/null
+make
+mv reduce_src/reduce .
 cd ../../../
-chmod +x src/pdb_parser_scripts/reduce/reduce 
+chmod +x src/pdb_parser_scripts/reduce/reduce
+
 ```
 
 ## Running

@@ -267,7 +267,7 @@ print("Generating output files")
 #Merge and save data with predictions
 
 df_total = df_structure.merge(df_ml, on=['pdbid','chainid','variant'], how='outer')
-df_total = df_total.drop("resenv", 1)
+df_total = df_total.drop("resenv", axis=1)
 print(f"{len(df_structure)-len(df_ml)} data points dropped when matching total data with ml predictions in: {dataset_key}.")
 
 if not os.path.exists('output'): 
