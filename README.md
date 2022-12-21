@@ -41,7 +41,7 @@ git clone https://github.com/ELELAB/RaSP_workflow.git
 ```
 conda install --channel defaults conda python=3.7 --yes
 conda update --channel defaults --all --yes
-pip install numpy==1.17.3 pandas=1.3.5 torch==1.2.0 biopython==1.72 pdb-tools
+pip install numpy==1.17.3 pandas==1.3.5 torch==1.2.0 biopython==1.72 pdb-tools
 pip install --upgrade pdb-tools
 conda install pdbfixer=1.5 openmm=7.3.1 -c omnia -c conda-forge -c anaconda -c defaults --yes
 conda install -c anaconda scikit-learn=1.0.2
