@@ -4,7 +4,7 @@ This guide is a broad generic use.
 Notice that the bash script rasp is only relevant for users of 
 bioinfo01, 03 and 04.
 
-##RaSP - The original Tool
+## RaSP - The original Tool
 
 ### citation:
 ```
