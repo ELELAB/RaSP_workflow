@@ -1,19 +1,13 @@
-import sys
-import glob
-import os
-import random
-import subprocess
-import numpy as np
-import pandas as pd
-import torch
-import time
-import datetime
-from Bio.PDB.Polypeptide import index_to_one, one_to_index
+#!/usr/bin/env python3
+
+#Rapid protein stability prediction, RaSP, Developed by Blaabjerg et al. 2022 doi: 10.1101/2022.07.14.500157 
+#Adapted and implemented in 2022, Kristine Degn
+
 import argparse
 
 # prepare parameters
 parser = argparse.ArgumentParser(prog = "RaSP_workflow",
-                                 usage = 'RaSP_workflow [-h] help.')
+                                 usage = "RaSP_workflow [-h] help.\n Rapid protein stability prediction, RaSP\n Tool developed by Blaabjerg et al. 2022 doi: 10.1101/2022.07.14.500157 \n Adapted and implemented in 2022, Kristine Degn")
 
 parser.add_argument("-i", '--input',
                     metavar = 'input pdb or code',
@@ -45,10 +39,28 @@ parser.add_argument("-p", "--path",
                     default="./src/",
                     help="Add the path for the RaSP scripts")
 
+parser.add_argument("-n", "--cores",
+                    metavar = "capping the number of cores to be used",
+                    type=str,
+                    default="1",
+                    help="choose the cores for the RaSP scripts")
 # to be updated based on new location
 
-
 args = parser.parse_args()
+
+import sys
+import glob
+import os
+import random
+import subprocess
+cores = str(args.cores)
+os.environ["OMP_NUM_THREADS"] = cores
+import numpy as np
+import pandas as pd
+import torch
+import time
+import datetime
+from Bio.PDB.Polypeptide import index_to_one, one_to_index
 
 pdb_input = args.input
 path = args.path
@@ -268,7 +280,6 @@ for pdbid in df_total["pdbid"].unique():
     df_pdb = df_total[df_total["pdbid"]==pdbid]
     for chainid in df_pdb["chainid"].unique():
         pred_outfile = f"output/{dataset_key}/cavity_pred_{pdbid}_{chainid}.csv"
-        #pred_outfile = f"{os.getcwd()}/output/{dataset_key}/cavity_pred_{pdbid}_{chainid}.csv"
         print(f"Parsing predictions from pdb: {pdbid}{chainid} into {pred_outfile}")
         df_chain = df_pdb[df_pdb["chainid"]==chainid]
         df_chain = df_chain.assign(pos = df_chain["variant"].str[1:-1])
@@ -278,8 +289,6 @@ for pdbid in df_total["pdbid"].unique():
         df_chain = df_chain.assign(mt_AA = df_chain["variant"].str[-1])
         seq = get_seq_from_variant(df_chain)
         df_chain.to_csv(pred_outfile, index=False)
-#        prism_outfile = f"output/{dataset_key}/prism_cavity_{pdbid}_{chainid}.txt"
-#        cavity_to_prism(df_chain, pdbid, chainid, seq, prism_outfile)
 
 # End timer and print result
 elapsed = datetime.timedelta(seconds = end_time - start_time)

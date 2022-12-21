@@ -24,7 +24,7 @@ from cavity_model import (
     ResidueEnvironmentsDataset,
     ToTensor,
 )
-from PrismData import PrismParser, VariantData
+#from PrismData import PrismParser, VariantData
 #from visualization import learning_curve_cavity, learning_curve_ds
 
 

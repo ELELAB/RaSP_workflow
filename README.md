@@ -43,7 +43,7 @@ chmod +x src/pdb_parser_scripts/reduce/reduce
 
 ## Running
 ```
-$ python run_RaSP.py [flags]
+$ RaSP_workflow [flags]
 ```
 
 ### Flags and Options
@@ -59,6 +59,9 @@ This is defined using the flag [-i] input pdb
  ex.  -i P62942 for the alphafold model
  ex.  -i 2XWR for the pdb model
  ex.  -i 2PPN.pdb for an existing structure. 
+
+If an existing pdb is used, it needs to be present in the working directory.
+
 ```
 
 * -c [CHAIN NAME]
@@ -82,6 +85,12 @@ using the -v version flag. This is optional. Per default version 4.
 
 ```
 RaSP have two runtypes, cpu and cuda. Cuda is a gpu type. 
+
+```
+* -n [cores]
+
+```
+RaSP can be run on multiple cores, specify using n.
 
 ```
 
@@ -121,11 +130,11 @@ The mutation is available in the variant column and the esitmated ddG is availab
 To post process this file and convert to mutatex and rosetta compatible formatting you can use: 
 
 ```
-$ python postprocess_RaSP.py -i cavity_pred_{identifier}_{chain}.csv
+$ RaSP_postprocess -i cavity_pred_{identifier}_{chain}.csv
 ```
 e.g.:
 
 ```
-$ python postprocess_RaSP.py -i output/predictions/cavity_pred_P62942_A.csv
+$ RaSP_postprocess -i output/predictions/cavity_pred_P62942_A.csv
 ```
 The output will also be available in output/predictions/.
