@@ -1,5 +1,24 @@
 # RaSP_workflow
-See guides in docs for Bioinfo01, 03, and 04 specific guides. 
+See guides in docs for Bioinfo01, 03, and 04 specific installation and use guides.
+
+## RaSP - The original Tool
+
+### citation:
+```
+Rapid protein stability prediction using deep learning representations
+Lasse M. Blaabjerg, Maher M. Kassem, Lydia L. Good, Nicolas Jonsson, Matteo Cagiada, Kristoffer E. Johansson, Wouter Boomsma, Amelie Stein, Kresten Lindorff-Larsen
+bioRxiv 2022.07.14.500157; doi: https://doi.org/10.1101/2022.07.14.500157 
+```
+The scripts to re-run the paper and data can be found at
+```
+https://github.com/KULL-Centre/papers/tree/main/2022/ML-ddG-Blaabjerg-et-al
+```
+The tool can be run directly at
+```
+https://colab.research.google.com/github/KULL-Centre/papers/blob/main/2022/ML-ddG-Blaabjerg-et-al/RaSPLab.ipynb
+```
+
+Below is the installation and use guides for a free standing version of RaSP:
 
 ## Installation
 
@@ -16,31 +35,30 @@ git clone https://github.com/ELELAB/RaSP_workflow.git
 ```
 
 ### INSTALL DEPENDENCY PACKAGES
-
 ```
 conda install --channel defaults conda python=3.7 --yes
 conda update --channel defaults --all --yes
-pip install numpy==1.17.3 torch==1.2.0 biopython==1.72 matplotlib==3.1.1 pdb-tools
-pip install --upgrade pdb-tools &> /dev/null
-conda install  mpl-scatter-density pdbfixer=1.5 openmm=7.3.1 -c omnia -c conda-forge -c anaconda -c defaults --yes
-conda install -c anaconda scikit-learn
-conda install -c conda-forge pyyaml
-pip install ptitprince==0.2.6
+pip install numpy==1.17.3 pandas==1.3.5 torch==1.2.0 biopython==1.72 pdb-tools
+pip install --upgrade pdb-tools
+conda install pdbfixer=1.5 openmm=7.3.1 -c omnia -c conda-forge -c anaconda -c defaults --yes
+conda install -c anaconda scikit-learn=1.0.2
 ```
 
 ### CLONE ADDITIONAL DEPENDENCIES
 ```
-cd src/pdb_parser_scripts
+cd RaSP_workflow/src/pdb_parser_scripts
 git clone https://github.com/rlabduke/reduce.git
 cd reduce/
-make &> /dev/null
+make
+mv reduce_src/reduce .
 cd ../../../
-chmod +x src/pdb_parser_scripts/reduce/reduce 
+chmod +x src/pdb_parser_scripts/reduce/reduce
+
 ```
 
 ## Running
 ```
-$ python run_RaSP.py [flags]
+$ RaSP_workflow [flags]
 ```
 
 ### Flags and Options
@@ -56,6 +74,9 @@ This is defined using the flag [-i] input pdb
  ex.  -i P62942 for the alphafold model
  ex.  -i 2XWR for the pdb model
  ex.  -i 2PPN.pdb for an existing structure. 
+
+If an existing pdb is used, it needs to be present in the working directory.
+
 ```
 
 * -c [CHAIN NAME]
@@ -79,6 +100,12 @@ using the -v version flag. This is optional. Per default version 4.
 
 ```
 RaSP have two runtypes, cpu and cuda. Cuda is a gpu type. 
+
+```
+* -n [cores]
+
+```
+RaSP can be run on multiple cores, specify using n.
 
 ```
 
@@ -118,11 +145,11 @@ The mutation is available in the variant column and the esitmated ddG is availab
 To post process this file and convert to mutatex and rosetta compatible formatting you can use: 
 
 ```
-$ python postprocess_RaSP.py -i cavity_pred_{identifier}_{chain}.csv
+$ RaSP_postprocess -i cavity_pred_{identifier}_{chain}.csv
 ```
 e.g.:
 
 ```
-$ python postprocess_RaSP.py -i output/predictions/cavity_pred_P62942_A.csv
+$ RaSP_postprocess -i output/predictions/cavity_pred_P62942_A.csv
 ```
 The output will also be available in output/predictions/.

@@ -1,0 +1,48 @@
+
+#!/usr/bin/env python3
+
+#Rapid protein stability prediction, RaSP, Developed by Blaabjerg et al. 2022 doi: 10.1101/2022.07.14.500157 
+#Adapted and implemented in 2022, Kristine Degn
+
+import argparse
+import pandas as pd
+
+parser = argparse.ArgumentParser(prog = "RaSP_postprocess",
+                                 usage = 'RaSP_postprocess [-h] help, [-i] input csv')
+
+parser.add_argument("-i", '--input',
+                    metavar = 'input csv',
+                    type=str,
+                    help='The name and path to of the output csv file, e.g. output/predictions/cavity_pred_P62942_A.csv')
+
+args = parser.parse_args()
+
+#importing file
+file = args.input
+
+#reading into dataframe and extracting relevant files.
+df = pd.read_csv(file)
+df = df[['variant', 'wt_AA', 'pos', 'mt_AA', 'chainid', 'score_ml']]
+
+#assigning Mutatex and Rosetta mutant normenclature
+mutatex_normenclature = []
+for i,k in enumerate(df.variant):
+    mutatex_v = f"{k[0]}{df.chainid[i]}{k[1:-1]}{k[-1]}"
+    mutatex_normenclature.append(mutatex_v)
+    
+rosetta_normenclature = []
+for i,k in enumerate(df.variant):
+    rosetta_v = f"{df.chainid[i]}.{k[0]}.{k[1:-1]}.{k[-1]}"
+    rosetta_normenclature.append(rosetta_v)
+
+df['mutatex_name'] = mutatex_normenclature
+df['rosetta_name'] = rosetta_normenclature
+
+#renaming columns
+df.rename({'score_ml': 'RaSP_ddG'}, axis=1, inplace=True)
+df = df[['variant', 'RaSP_ddG', 'mutatex_name', 'rosetta_name', 'wt_AA', 'pos', 'mt_AA', 'chainid']]
+
+#exporting file.
+f = ("/").join(file.split("/")[:-1])
+n = file.split("/")[-1].split("cavity_pred_")[-1]
+df.to_csv(f"{f}/post_processed_{n}")

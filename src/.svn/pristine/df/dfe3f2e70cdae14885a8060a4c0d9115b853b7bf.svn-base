@@ -24,8 +24,8 @@ from cavity_model import (
     ResidueEnvironmentsDataset,
     ToTensor,
 )
-#from PrismData import PrismParser, VariantData
-#from visualization import learning_curve_cavity, learning_curve_ds
+from PrismData import PrismParser, VariantData
+from visualization import learning_curve_cavity, learning_curve_ds
 
 
 def train_val_split_cavity(
@@ -131,7 +131,7 @@ def eval_loop(
 
     return acc_val, loss_val
 
-"""
+
 def train_loop(
     dataloader_train,
     dataloader_val,
@@ -149,9 +149,9 @@ def train_loop(
     acc_val_list = []
     acc_train_list = []
     loss_train_list = []
-
-#    Trains the cavity model in a loop over EPOCHS
-
+    """
+    Trains the cavity model in a loop over EPOCHS
+    """
     for epoch in range(EPOCHS):
         labels_true = []
         labels_pred = []
@@ -203,7 +203,7 @@ def train_loop(
             print(f"Early stopping activated.")
             break
 
-#    learning_curve_cavity(acc_val_list, acc_train_list, loss_train_list)
+    learning_curve_cavity(acc_val_list, acc_train_list, loss_train_list)
     best_model_path = epoch_idx_to_model_path[current_best_epoch_idx]
     print(
         f"Best epoch idx: {current_best_epoch_idx} with validation loss: "
@@ -211,7 +211,7 @@ def train_loop(
         f"{best_model_path}"
     )
     return best_model_path
-"""
+
 
 def populate_dfs_with_resenvs(ddg_data, resenv_dataset):
     """
@@ -219,7 +219,7 @@ def populate_dfs_with_resenvs(ddg_data, resenv_dataset):
     """
     print(
         "Dropping data points where residue is not defined in structure "
-        "or due to missing parsed pdb file"
+        f"or due to missing parsed pdb file"
     )
     # Add wt residue environments to standard ddg data dataframes
 
@@ -303,20 +303,6 @@ def remove_disulfides(ddg_data):
             "C453",
             "C460",
             "C464",
-        ],
-        "6MYA": [
-            "C5",
-            "C43",
-            "C56",
-            "C68",
-            "C91",
-            "C137",
-            "C276",
-            "C280",
-            "C304",
-            "C459",
-            "C466",
-            "C470",
         ],
         "1PS1": ["C126", "C134"],
         "6M17": ["C113", "C121", "C341", "C510", "C522"],
@@ -429,7 +415,7 @@ def init_lin_weights(m):
         torch.nn.init.kaiming_uniform_(m.weight)
         m.bias.data.fill_(0.01)
 
-"""
+
 def ds_train_val(
     df_ddg,
     dataloader_train,
@@ -442,7 +428,9 @@ def ds_train_val(
     EPOCHS,
     DEVICE,
 ):
-#    Trains the downstream model in a loop over EPOCHS.
+    """
+    Trains the downstream model in a loop over EPOCHS.
+    """
 
     # Set seed
     np.random.seed(model_idx)
@@ -533,23 +521,23 @@ def ds_train_val(
         pearson_r_list.append(pearsonr(val_ddg_pred.numpy(), val_ddg.numpy())[0])
 
     # Print learning curve
-#    learning_curve_ds(pearson_r_list, val_loss_list, train_loss_list, model_idx)
+    learning_curve_ds(pearson_r_list, val_loss_list, train_loss_list, model_idx)
 
     # Save results and model
-#    lc_results = (pearson_r_list, val_loss_list, train_loss_list, model_idx)
-#    with open(
-#        f"output/ds_models/ds_model_{model_idx}/lc_results.pkl",
-#        "wb",
-#    ) as f:
-#        pickle.dump(lc_results, f)
-#    torch.save(
-#        ds_model_net.state_dict(),
-#        f"output/ds_models/ds_model_{model_idx}/model.pt",
-#    )
-"""
+    lc_results = (pearson_r_list, val_loss_list, train_loss_list, model_idx)
+    with open(
+        f"{os.path.dirname(os.getcwd())}/output/ds_models/ds_model_{model_idx}/lc_results.pkl",
+        "wb",
+    ) as f:
+        pickle.dump(lc_results, f)
+    torch.save(
+        ds_model_net.state_dict(),
+        f"{os.path.dirname(os.getcwd())}/output/ds_models/ds_model_{model_idx}/model.pt",
+    )
+
 
 def ds_pred(
-    cavity_model_net, ds_model_net, df_total, dataset_key, NUM_ENSEMBLE, DEVICE, path
+    cavity_model_net, ds_model_net, df_total, dataset_key, NUM_ENSEMBLE, DEVICE
 ):
     """
     Makes predictions using the cavity and downstream model (RaSP model)
@@ -581,19 +569,11 @@ def ds_pred(
             # Load ds models in a load
             for i in range(NUM_ENSEMBLE):
                 model_idx = i
-                if DEVICE == 'cpu':
-                    ds_model_net.load_state_dict(
-                        torch.load(
-                            f"{path}/ds_models/ds_model_{model_idx}/model.pt", #added ,
-                            map_location=torch.device('cpu') #added this line
-                        )
+                ds_model_net.load_state_dict(
+                    torch.load(
+                        f"{os.path.dirname(os.getcwd())}/output/ds_models/ds_model_{model_idx}/model.pt"
                     )
-                elif DEVICE == 'CUDA':
-                    ds_model_net.load_state_dict(
-                        torch.load(
-                            f"{path}/ds_models/ds_model_{model_idx}/model.pt"
-                        )
-                    )
+                )
                 ds_model_net.eval()
 
                 # Compute predictions
@@ -740,7 +720,7 @@ def compute_pdb_combo_corrs(df, dataset_key):
         results.append((combo[0], combo[1], pearson_r))
 
     with open(
-        f"output/{dataset_key}/combo_corr_results.pkl",
+        f"{os.path.dirname(os.getcwd())}/output/{dataset_key}/combo_corr_results.pkl",
         "wb",
     ) as f:
         pickle.dump(results, f)

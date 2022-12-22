@@ -1,0 +1,91 @@
+###THIS FILE AIMS TO DESCRIBE HOW TO RUN
+###THE RASP WORKFLOW.
+
+#CONTAINS THE FOLLOWING SECTIONS: 
+
+# Activate envrionment
+# running 
+# flags (for running) 
+# Examples of runs
+
+########### ACTIVATE ENVIRONMENT ###############
+#see installation_guide.txt to set up environment.
+#Bioinfo01
+module load conda/4.9.2/modulefile
+conda activate rasp
+
+#Bioinfo03 and 04
+/usr/local/miniconda3/bin/conda
+conda activate rasp
+
+#activaton depends on your personal environment.
+
+########### RUNNING ##############
+
+RaSP_workflow [flags]
+
+########## FLAGS ##################
+# -n [CORES]
+
+# This number will limit the number of cores
+# if you do not do this, all available cores
+# will be used. If you do not specify only one
+# core will be used.
+
+#ex. -n 4
+#ex. -n 8
+
+# -i [INPUT FILE]
+
+#There are three modes of running RaSP:
+#       1) with a uniprot id to download the AlphaFold model
+#       2) with a PDB id to download a PDB model
+#       3) with a file name to run RaSP on an existing PDB file.
+
+#This is defined using the flag [-i] input pdb
+# ex.  -i P62942 for the alphafold model
+# ex.  -i 2XWR for the pdb model
+# ex.  -i 2PPN.pdb for an existing structure. 
+
+# -c [CHAIN NAME]
+
+# RaSP can only take one chain at a time as input. The chain name 
+# should be defined using -c chain. 
+
+# ex. -c A
+# ex. -c B
+
+# -v [ALPHAFOLD VERSION]
+
+# When an AlphaFold model is downloaded the version can be defined 
+# using the -v version flag. This is optional. Per default version 4. 
+
+# -r [RUNTYPE]
+
+# RaSP have two runtypes, cpu and cuda. Cuda is a gpu type. 
+# When running on bioinfo01 always use cpu or leave the flag
+# out since the default is cpu. When running on bioinfo03 or 04 
+# use cuda, since this will speed up the process. 
+
+#-p [PATH]
+
+# The directory containing the RaSP scripts, model and all additional
+# data, can be specified using the command -p. Per default this is
+# ./src, but can be changed to any other path. 
+
+############ EXAMPLES #######################
+
+#ALPHAFOLD MODELS
+RaSP_workflow -n 4 -i P62942 -c A -v 4 -r cpu
+
+#Alternatively on bioinfo03 or 04
+
+RaSP_workflow -n 4 -i P62942 -c A -r cuda
+
+#PDB ID
+RaSP_workflow -n 4 -i 2XWR -c B -r cuda
+
+#EXISTING PDB
+RaSP_workflow -n 4 -i trimmed_ulk1.pdb -c A -r cuda
+#NOTICE that the pdb should be in the working directory
+#or in data/input.  
