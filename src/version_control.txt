@@ -1,0 +1,16 @@
+cavity_models: 
+	The cavity models: 
+		date: 14-Jul-2022
+		Commit id: 5d06da0
+	The best_model_path.txt:
+		date: 06-Dec-2022
+		Commit id:  e32a54e
+
+ds_models:
+	date: 02-Aug-2022
+	commit id: 3ccebe8
+
+pdb_frequencies.npz:
+	Available via colab_additionals
+	date: 03-Aug-2022
+	commit id: 102708f
