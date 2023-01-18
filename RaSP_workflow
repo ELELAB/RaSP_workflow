@@ -292,5 +292,11 @@ for pdbid in df_total["pdbid"].unique():
 
 # End timer and print result
 elapsed = datetime.timedelta(seconds = end_time - start_time)
+
+#clean up so it is ready for the next input file.
+os.system("rm data/predictions/raw/*")
+os.system("rm data/predictions/parsed/*")
+os.system("rm data/predictions/cleaned/*")
+
 print("Complete - files generated")
 
