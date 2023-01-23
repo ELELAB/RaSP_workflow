@@ -4,7 +4,6 @@
 #Adapted and implemented in 2022, Kristine Degn
 
 import argparse
-import shutil
 
 # prepare parameters
 parser = argparse.ArgumentParser(prog = "RaSP_workflow",
@@ -40,6 +39,12 @@ parser.add_argument("-p", "--path",
                     default="./src/",
                     help="Add the path for the RaSP scripts")
 
+parser.add_argument("-o", "--output",
+                    metavar = "Path to output",
+                    type=str,
+                    default=".",
+                    help="Add the path for the output, default current working dir")
+
 parser.add_argument("-n", "--cores",
                     metavar = "capping the number of cores to be used",
                     type=str,
@@ -64,6 +69,7 @@ import datetime
 from Bio.PDB.Polypeptide import index_to_one, one_to_index
 
 pdb_input = args.input
+output = args.output
 path = args.path
 sys.path.append(path)
 
@@ -79,7 +85,6 @@ from helpers import (
      cavity_to_prism,#in use
      get_seq_from_variant, #in use
 )
-
 
 if pdb_input[-4:].lower() == '.pdb':
     PDB_custom = pdb_input[:-4]
@@ -113,40 +118,41 @@ torch.backends.cudnn.benchmark = False
 torch.backends.cudnn.deterministic = True
 
 ## Main deep parameters
-DEVICE = runtype # "cpu" #"cuda"  # "cpu" or "cuda"
+DEVICE = runtype # "cpu" or "cuda"
 NUM_ENSEMBLE = 10
 TASK_ID = int(1)
 PER_TASK = int(1)
 
-if not os.path.exists('data'): 
-    os.makedirs('data')
-if not os.path.exists('data/predictions'):
-    os.makedirs('data/predictions')
-if not os.path.exists('data/predictions/raw'):
-    os.makedirs('data/predictions/raw')
-if not os.path.exists('data/predictions/cleaned'):
-    os.makedirs('data/predictions/cleaned')
-if not os.path.exists('data/predictions/parsed'):
-    os.makedirs('data/predictions/parsed')
-if not os.path.exists('data/input'): 
-    os.makedirs('data/input')
+#create folder structure:
+
+if not os.path.exists(f'{output}/data'): 
+    os.makedirs(f'{output}/data')
+if not os.path.exists(f'{output}/data/predictions'):
+    os.makedirs(f'{output}/data/predictions')
+if not os.path.exists(f'{output}/data/predictions/raw'):
+    os.makedirs(f'{output}/data/predictions/raw')
+if not os.path.exists(f'{output}/data/predictions/cleaned'):
+    os.makedirs(f'{output}/data/predictions/cleaned')
+if not os.path.exists(f'{output}/data/predictions/parsed'):
+    os.makedirs(f'{output}/data/predictions/parsed')
+if not os.path.exists(f'{output}/data/input'): 
+    os.makedirs(f'{output}/data/input')
 
 #load pdb
 if (AF_ID !=''): 
-    subprocess.call(['curl','-s','-f',f'https://alphafold.ebi.ac.uk/files/AF-{AF_ID}-F1-model_v{version}.pdb','-o', f'data/input/{AF_ID}.pdb']) #'query_protein.pdb'])
+    subprocess.call(['curl','-s','-f',f'https://alphafold.ebi.ac.uk/files/AF-{AF_ID}-F1-model_v{version}.pdb','-o', f'{output}/data/input/{AF_ID}.pdb']) #'query_protein.pdb'])
     query_protein = f"{AF_ID}"
     print("ALPHAFOLD downloaded")
 elif (PDB_ID !=''):
-    subprocess.call(['curl','-s','-f',f'https://files.rcsb.org/download/{PDB_ID}.pdb','-o', f'data/input/{PDB_ID}.pdb'])#'query_protein.pdb'])
+    subprocess.call(['curl','-s','-f',f'https://files.rcsb.org/download/{PDB_ID}.pdb','-o', f'{output}/data/input/{PDB_ID}.pdb'])#'query_protein.pdb'])
     query_protein = f"{PDB_ID}"
     print("PDB downloaded")
-
 elif PDB_custom:
-    if os.path.exists(f'data/input/{PDB_custom}.pdb'):
+    if os.path.exists(f'{output}/data/input/{PDB_custom}.pdb'):
         query_protein = f"{PDB_custom}"
         print('PDB file correctly loaded')
     elif os.path.exists(f'{PDB_custom}.pdb'):
-        os.system(f"mv {PDB_custom}.pdb data/input/{PDB_custom}.pdb")
+        os.system(f"mv {PDB_custom}.pdb {output}/data/input/{PDB_custom}.pdb")
         query_protein = f"{PDB_custom}"
         print('PDB file correctly loaded')
     else:
@@ -155,10 +161,10 @@ else:
   sys.exit('ERROR: Please select input')
 
 
-os.system(f"pdb_selchain -{chain} data/input/{query_protein}.pdb | pdb_delhetatm | pdb_delres --999:0:1 | pdb_fixinsert | pdb_tidy  > data/predictions/raw/{query_protein}_{uniquechain}.pdb")
+os.system(f"pdb_selchain -{chain} {output}/data/input/{query_protein}.pdb | pdb_delhetatm | pdb_delres --999:0:1 | pdb_fixinsert | pdb_tidy  > {output}/data/predictions/raw/{query_protein}_{uniquechain}.pdb")
 
-pdb_input_dir = "data/predictions/raw/"
-input_pdbs = sorted(list(filter(lambda x: x.endswith(".pdb"), os.listdir('data/predictions/raw/'))))
+pdb_input_dir = f'{output}/data/predictions/raw/'
+input_pdbs = sorted(list(filter(lambda x: x.endswith(".pdb"), os.listdir(f'{output}/data/predictions/raw/'))))
 start = (TASK_ID-1)*(PER_TASK)
 end = (TASK_ID*PER_TASK)
 if end > len(input_pdbs):
@@ -167,10 +173,10 @@ pdbs = input_pdbs[start:end]
 pdb_names = [i.split(".")[0] for i in pdbs]
 print("Pre-processing PDBs ...")
 
-os.system(f"python {path}/pdb_parser_scripts/clean_pdb.py --pdb_file_in data/predictions/raw/{query_protein}_{uniquechain}.pdb --out_dir data/predictions/cleaned/ --reduce_exe {path}/pdb_parser_scripts/reduce/reduce --path {path}") #&> /dev/null
-os.system(f"python {path}/pdb_parser_scripts/extract_environments.py --pdb_in data/predictions/cleaned/{query_protein}_{uniquechain}_clean.pdb  --out_dir data/predictions/parsed/")  #&> /dev/null
+os.system(f"python {path}/pdb_parser_scripts/clean_pdb.py --pdb_file_in {output}/data/predictions/raw/{query_protein}_{uniquechain}.pdb --out_dir {output}/data/predictions/cleaned/ --reduce_exe {path}/pdb_parser_scripts/reduce/reduce --path {path}") #&> /dev/null
+os.system(f"python {path}/pdb_parser_scripts/extract_environments.py --pdb_in {output}/data/predictions/cleaned/{query_protein}_{uniquechain}_clean.pdb  --out_dir {output}/data/predictions/parsed/")  #&> /dev/null
 
-if os.path.exists(f"data/predictions/parsed/{query_protein}_{uniquechain}_clean_coordinate_features.npz"):
+if os.path.exists(f"{output}/data/predictions/parsed/{query_protein}_{uniquechain}_clean_coordinate_features.npz"):
   print("Pre-processing PDBs correctly ended")
 else:
   print("Pre-processing PDB didn't end correcly, please check input informations")
@@ -178,7 +184,9 @@ else:
 
 print("#################### PREPARE RUN #####################")
 
-pdb_filenames_ds = sorted(glob.glob("data/predictions/parsed/*coord*"))
+#pdb_filenames_ds = sorted(glob.glob(f"{output}/data/predictions/parsed/*coord*"))
+#check that this might just fix the issue
+pdb_filenames_ds = sorted(glob.glob(f"{output}/data/predictions/parsed/{query_protein}_{uniquechain}_clean_coordinate_features.npz"))
 
 dataset_structure = ResidueEnvironmentsDataset(pdb_filenames_ds, transformer=None)
 
@@ -247,7 +255,6 @@ start_time = time.perf_counter()
 print("Starting downstream model prediction")
 
 print("########### RUNNING ################")
-
 dataset_key="predictions"
 df_ml = ds_pred(cavity_model_net,
                 ds_model_net,
@@ -271,16 +278,16 @@ df_total = df_structure.merge(df_ml, on=['pdbid','chainid','variant'], how='oute
 df_total = df_total.drop("resenv", axis=1)
 print(f"{len(df_structure)-len(df_ml)} data points dropped when matching total data with ml predictions in: {dataset_key}.")
 
-if not os.path.exists('output'): 
-    os.makedirs('output')
-if not os.path.exists(f'output/{dataset_key}'): 
-    os.makedirs(f'output/{dataset_key}')
-
+if not os.path.exists(f'{output}/output'): 
+    os.makedirs(f'{output}/output')
+if not os.path.exists(f'{output}/output/{dataset_key}'): 
+    os.makedirs(f'{output}/output/{dataset_key}')
+    
 # Parse output into separate files by pdb, print to PRISM format
 for pdbid in df_total["pdbid"].unique():
     df_pdb = df_total[df_total["pdbid"]==pdbid]
     for chainid in df_pdb["chainid"].unique():
-        pred_outfile = f"output/{dataset_key}/cavity_pred_{pdbid}_{chainid}.csv"
+        pred_outfile = f"{output}/output/{dataset_key}/cavity_pred_{pdbid}_{chainid}.csv"
         print(f"Parsing predictions from pdb: {pdbid}{chainid} into {pred_outfile}")
         df_chain = df_pdb[df_pdb["chainid"]==chainid]
         df_chain = df_chain.assign(pos = df_chain["variant"].str[1:-1])
@@ -294,8 +301,4 @@ for pdbid in df_total["pdbid"].unique():
 # End timer and print result
 elapsed = datetime.timedelta(seconds = end_time - start_time)
 
-#clean up so it is ready for the next input file.
-shutil.rmtree("data/predictions")
-
 print("Complete - files generated")
-
