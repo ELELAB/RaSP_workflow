@@ -4,6 +4,7 @@
 #Adapted and implemented in 2022, Kristine Degn
 
 import argparse
+import shutil
 
 # prepare parameters
 parser = argparse.ArgumentParser(prog = "RaSP_workflow",
@@ -294,9 +295,7 @@ for pdbid in df_total["pdbid"].unique():
 elapsed = datetime.timedelta(seconds = end_time - start_time)
 
 #clean up so it is ready for the next input file.
-os.system("rm data/predictions/raw/*")
-os.system("rm data/predictions/parsed/*")
-os.system("rm data/predictions/cleaned/*")
+shutil.rmtree("data/predictions")
 
 print("Complete - files generated")
 
