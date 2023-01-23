@@ -1,16 +1,58 @@
 cavity_models: 
 	The cavity models: 
 		date: 14-Jul-2022
-		Commit id: 5d06da0
+		available via: https://github.com/KULL-Centre/papers/tree/main/2022/ML-ddG-Blaabjerg-et-al/output/cavity_models/
+		Commit id: 5d06da0e441629fa2fc1be16148b90822585c3e0
+		path: RaSP_workflow/src/cavity_models/*.pt
+		md5 hash values: 
+			25f2d9aa3bd15249d27d595f391c04c8  cavity_models/cavity_model_00.pt
+			83a7fd3f1111934128f1d4fdbd588958  cavity_models/cavity_model_01.pt
+                        4a2ab75555052ce11441d7eb42510bd9  cavity_models/cavity_model_02.pt
+                        099cccb84433b1a6f89cc53f0f9b9a0a  cavity_models/cavity_model_03.pt
+			79f919ed8eec698b5976db27d26b3789  cavity_models/cavity_model_04.pt
+			f4a68f78160ecb4b8f247d64a1475ee8  cavity_models/cavity_model_05.pt
+			f5b63f185be68fcbbfb55037a0e8dd35  cavity_models/cavity_model_06.pt
+			c0a04668480c46d6144adb5e4b7f890c  cavity_models/cavity_model_07.pt
+			82f69db15b4bb09f7fa5fbfbbd6c0477  cavity_models/cavity_model_08.pt
+			ea36d3a68d7ddaec8a8100da55872403  cavity_models/cavity_model_09.pt
+			662dcb912cbb5bbab6575752fd84c2cc  cavity_models/cavity_model_10.pt
+			9c6e16c44d4432e8e3fa521abceb823d  cavity_models/cavity_model_11.pt
+			50b4d36ad5211e48b028c0c3463aa78d  cavity_models/cavity_model_12.pt
+			86a96818feec62eea08ea629842c7c97  cavity_models/cavity_model_13.pt
+			fe4651862c1da2c171e5e66e581fd4f4  cavity_models/cavity_model_14.pt
+			7f039dab359da67f5870e4c8ba4204ee  cavity_models/cavity_model_15.pt
+			4000f94f93a9897a86ff7c04a1a33d0d  cavity_models/cavity_model_16.pt
+			f671af908e5e5f7fa87e2cd69c6b213b  cavity_models/cavity_model_17.pt
+			4264bf1f3c8e50198d23f5dcfe62ffc4  cavity_models/cavity_model_18.pt
+			d3192c15d6b0d321c727191bac6c29fb  cavity_models/cavity_model_19.pt
 	The best_model_path.txt:
 		date: 06-Dec-2022
-		Commit id:  e32a54e
+		available via: original path: https://github.com/KULL-Centre/papers/tree/main/2022/ML-ddG-Blaabjerg-et-al/output/cavity_models/best_model_path.txt
+		Commit id:  e32a54e88d889709b677394e5bc9e3bb8e5fd2ce
+		path: RaSP_workflow/src/cavity_models/best_model_path.txt
+		md5 hash value: d40ebca3c33aa44b3341c48f62a7255a
 
 ds_models:
 	date: 02-Aug-2022
-	commit id: 3ccebe8
+	available via: https://github.com/KULL-Centre/papers/tree/main/2022/ML-ddG-Blaabjerg-et-al/output/ds_models
+	commit id: 3ccebe87e017b6bd737f88e1943557d128c85616
+	path: RaSP_workflow/src/ds_models/ds_model_*/model.pt
+	md5 hash value: 
+			88d8d836f4070245d23532ec46ff886b  ds_models/ds_model_0/model.pt
+			4ceca5dda221251f1333cc67717339f2  ds_models/ds_model_1/model.pt
+			9126cb60c340d2c165e05e7a8e5b3ffa  ds_models/ds_model_2/model.pt
+			d3cc21c451b1e5dbe797937fd6c34d3e  ds_models/ds_model_3/model.pt
+			a0d23110519a3763205a795fb713b5bf  ds_models/ds_model_4/model.pt
+			6c0bc930643aa51ebeba44ddea3b5865  ds_models/ds_model_5/model.pt
+			1ad01d6e52160f9f4083775f247d6127  ds_models/ds_model_6/model.pt
+			2470800d25b8c3c088c1eb17e6c2e440  ds_models/ds_model_7/model.pt
+			313b25729790e7698ce9f35b0b632177  ds_models/ds_model_8/model.pt
+			9f02a8de64a4a354eb4734d54ee9ba23  ds_models/ds_model_9/model.pt
 
 pdb_frequencies.npz:
-	Available via colab_additionals
 	date: 03-Aug-2022
-	commit id: 102708f
+	available via: https://github.com/KULL-Centre/papers/tree/main/2022/ML-ddG-Blaabjerg-et-al/colab_additonals/pdb_frequencies.npz
+	commit id: 102708fab868ff1d756837aa52580f56fe72b2d5
+	path: RaSP_workflow/src/pdb_frequencies.npz	
+	md5 hash value: 5202c2d8976e8063c9cdc80c7cf316ad
+	
