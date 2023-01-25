@@ -4,6 +4,7 @@
 #Adapted and implemented in 2022, Kristine Degn
 
 import argparse
+import shutil
 
 # prepare parameters
 parser = argparse.ArgumentParser(prog = "RaSP_workflow",
@@ -55,8 +56,8 @@ parser.add_argument("-n", "--cores",
 args = parser.parse_args()
 
 import sys
-import glob
 import os
+import glob
 import random
 import subprocess
 cores = str(args.cores)
@@ -74,16 +75,16 @@ path = args.path
 sys.path.append(path)
 
 from cavity_model import (
-     CavityModel, #in use
-     DownstreamModel, #in use
-     ResidueEnvironmentsDataset,#in use
+     CavityModel,
+     DownstreamModel,
+     ResidueEnvironmentsDataset,
 )
 
 from helpers import (
-     init_lin_weights, #in use
-     ds_pred, #in use
-     cavity_to_prism,#in use
-     get_seq_from_variant, #in use
+     init_lin_weights,
+     ds_pred,
+     cavity_to_prism,
+     get_seq_from_variant,
 )
 
 if pdb_input[-4:].lower() == '.pdb':
@@ -152,7 +153,7 @@ elif PDB_custom:
         query_protein = f"{PDB_custom}"
         print('PDB file correctly loaded')
     elif os.path.exists(f'{PDB_custom}.pdb'):
-        os.system(f"mv {PDB_custom}.pdb {output}/data/input/{PDB_custom}.pdb")
+        shutil.copyfile(f"{PDB_custom}.pdb", f"{output}/data/input/{PDB_custom}.pdb")
         query_protein = f"{PDB_custom}"
         print('PDB file correctly loaded')
     else:
@@ -184,8 +185,6 @@ else:
 
 print("#################### PREPARE RUN #####################")
 
-#pdb_filenames_ds = sorted(glob.glob(f"{output}/data/predictions/parsed/*coord*"))
-#check that this might just fix the issue
 pdb_filenames_ds = sorted(glob.glob(f"{output}/data/predictions/parsed/{query_protein}_{uniquechain}_clean_coordinate_features.npz"))
 
 dataset_structure = ResidueEnvironmentsDataset(pdb_filenames_ds, transformer=None)
