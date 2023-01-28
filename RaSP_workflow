@@ -216,7 +216,7 @@ df_structure.drop(columns="index", inplace=True)
 
 
 # Load PDB amino acid frequencies used to approximate unfolded states
-pdb_nlfs = -np.log(np.load(f"{path}/pdb_frequencies.npz")["frequencies"])
+pdb_nlfs = -np.log(np.load(f"{path}/pdb_frequencies_colab.npz")["frequencies"])
 
 # # Add wt and mt idxs and freqs to df
 df_structure["wt_idx"] = df_structure.apply(lambda row: one_to_index(row["variant"][0]), axis=1)
