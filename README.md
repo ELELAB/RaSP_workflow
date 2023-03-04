@@ -62,6 +62,24 @@ $ RaSP_workflow [flags]
 ```
 
 ### Flags and Options
+* -t [INPUT TYPE]
+
+```
+There are three modes of running RaSP:
+        1) with a uniprot id to download the AlphaFold model
+        2) with a PDB id to download a PDB model
+        3) with a file name to run RaSP on an existing PDB file.
+
+In each case, this should be defined with the input type [-t].
+ ex. -t FILE for an existing pdb file.
+ ex. -t AF to download a new Alphafold Sturcture
+ ex. -t PDB to download a new PDB structure. 
+
+Per default FILE is used, hence you can ommit this flag if you use an existing file.
+
+```
+
+
 * -i [INPUT FILE]
 
 ```
@@ -75,7 +93,7 @@ This is defined using the flag [-i] input pdb
  ex.  -i 2XWR for the pdb model
  ex.  -i 2PPN.pdb for an existing structure. 
 
-If an existing pdb is used, it needs to be present in the working directory.
+If an existing pdb is used, it needs to be present in the working directory or data/input/
 
 ```
 
