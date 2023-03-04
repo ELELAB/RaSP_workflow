@@ -10,6 +10,12 @@ import shutil
 parser = argparse.ArgumentParser(prog = "RaSP_workflow",
                                  usage = "RaSP_workflow [-h] help.\n Rapid protein stability prediction, RaSP\n Tool developed by Blaabjerg et al. 2022 doi: 10.1101/2022.07.14.500157 \n Adapted and implemented in 2022, Kristine Degn")
 
+parser.add_argument("-t", "--type",
+                    metavar = "the type of input file; FILE, PDB, AF",
+                    type=str,
+                    default="FILE",
+                    help="RaSP can handle existing files in pdb format, FILE, a four digit PDB id, PDB. And an Alphafold code corresponding to the uniprot id. A FILE is default")
+
 parser.add_argument("-i", '--input',
                     metavar = 'input pdb or code',
                     required=True,
@@ -69,6 +75,7 @@ import time
 import datetime
 from Bio.PDB.Polypeptide import index_to_one, one_to_index
 
+pdb_type = args.type
 pdb_input = args.input
 output = args.output
 path = args.path
@@ -86,18 +93,6 @@ from helpers import (
      cavity_to_prism,
      get_seq_from_variant,
 )
-
-if pdb_input[-4:].lower() == '.pdb':
-    PDB_custom = pdb_input[:-4]
-else: PDB_custom = ''
-
-if len(pdb_input) == 4:
-    PDB_ID = pdb_input
-else: PDB_ID = ''
-
-if len(pdb_input) == 6:
-    AF_ID = pdb_input
-else: AF_ID = ''
 
 version = int(args.version)
 
@@ -140,27 +135,30 @@ if not os.path.exists(f'{output}/data/input'):
     os.makedirs(f'{output}/data/input')
 
 #load pdb
-if (AF_ID !=''): 
-    subprocess.call(['curl','-s','-f',f'https://alphafold.ebi.ac.uk/files/AF-{AF_ID}-F1-model_v{version}.pdb','-o', f'{output}/data/input/{AF_ID}.pdb']) #'query_protein.pdb'])
-    query_protein = f"{AF_ID}"
-    print("ALPHAFOLD downloaded")
-elif (PDB_ID !=''):
-    subprocess.call(['curl','-s','-f',f'https://files.rcsb.org/download/{PDB_ID}.pdb','-o', f'{output}/data/input/{PDB_ID}.pdb'])#'query_protein.pdb'])
-    query_protein = f"{PDB_ID}"
-    print("PDB downloaded")
-elif PDB_custom:
-    if os.path.exists(f'{output}/data/input/{PDB_custom}.pdb'):
-        query_protein = f"{PDB_custom}"
+query_protein = f"{pdb_input}"
+
+if pdb_type == "AF":
+    process = subprocess.call(['curl','-s','-f',f'https://alphafold.ebi.ac.uk/files/AF-{pdb_input}-F1-model_v{version}.pdb','-o', f'{output}/data/input/{pdb_input}.pdb']) #'query_protein.pdb'])
+    if process != 22:
+        print("ALPHAFOLD downloaded")
+    else:
+        sys.exit('ERROR: Choosen type, AF, and input does not match')
+elif pdb_type == "PDB":
+    process = subprocess.call(['curl','-s','-f',f'https://files.rcsb.org/download/{pdb_input}.pdb','-o', f'{output}/data/input/{pdb_input}.pdb'])#'query_protein.pdb'])
+    if process != 22:
+        print("PDB downloaded")
+    else:
+        sys.exit('ERROR: Choosen type, PDB, and input does not match')
+elif pdb_type == "FILE":
+    if os.path.exists(f'{output}/data/input/{pdb_input}.pdb'):
         print('PDB file correctly loaded')
-    elif os.path.exists(f'{PDB_custom}.pdb'):
-        shutil.copyfile(f"{PDB_custom}.pdb", f"{output}/data/input/{PDB_custom}.pdb")
-        query_protein = f"{PDB_custom}"
+    elif os.path.exists(f'{pdb_input}.pdb'):
+        shutil.copyfile(f"{pdb_input}.pdb", f"{output}/data/input/{pdb_input}.pdb")
         print('PDB file correctly loaded')
     else:
         sys.exit('PDB upload failed, check naming and placement of file')
 else:
-  sys.exit('ERROR: Please select input')
-
+    sys.exit('ERROR: Choosen type is not supported, choose FILE, AF or PDB.')
 
 os.system(f"pdb_selchain -{chain} {output}/data/input/{query_protein}.pdb | pdb_delhetatm | pdb_delres --999:0:1 | pdb_fixinsert | pdb_tidy  > {output}/data/predictions/raw/{query_protein}_{uniquechain}.pdb")
 
