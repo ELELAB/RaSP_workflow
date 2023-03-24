@@ -588,7 +588,7 @@ def ds_pred(
                             map_location=torch.device('cpu') #added this line
                         )
                     )
-                elif DEVICE == 'CUDA':
+                elif DEVICE == 'cuda':
                     ds_model_net.load_state_dict(
                         torch.load(
                             f"{path}/ds_models/ds_model_{model_idx}/model.pt"
