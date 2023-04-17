@@ -41,10 +41,10 @@ parser.add_argument("-r", "--runtype",
                     help="RaSP can run on either cuda or cpu")
 
 parser.add_argument("-p", "--path",
-                    metavar = "Path to program",
+                    metavar = "Path to the src directory",
                     type=str,
                     default="./src/",
-                    help="Add the path for the RaSP scripts")
+                    help="Add the path for the RaSP src directory if different from current working dir")
 
 parser.add_argument("-o", "--output",
                     metavar = "Path to output",

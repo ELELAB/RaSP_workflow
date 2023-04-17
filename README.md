@@ -126,6 +126,12 @@ RaSP have two runtypes, cpu and cuda. Cuda is a gpu type.
 RaSP can be run on multiple cores, specify using n.
 
 ```
+* -p [PATH]
+```
+
+The src directory containing the scripts, model and all additional
+data, can be specified using the command -p. Per default this is
+./src, but can be changed to any other path
 
 ### Output
 
