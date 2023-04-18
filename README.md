@@ -177,6 +177,7 @@ e.g.:
 $ RaSP_postprocess -i output/predictions/cavity_pred_P62942_A.csv
 ```
 The output will also be available in output/predictions/.
+```
 
 ## License
 Source code and model weights are licensed under the Apache Licence, Version 2.0.
