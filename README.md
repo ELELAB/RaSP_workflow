@@ -131,7 +131,8 @@ RaSP can be run on multiple cores, specify using n.
 
 The src directory containing the scripts, model and all additional
 data, can be specified using the command -p. Per default this is
-./src, but can be changed to any other path
+./src, but can be changed to any other path.
+```
 
 ### Output
 
@@ -177,7 +178,7 @@ e.g.:
 $ RaSP_postprocess -i output/predictions/cavity_pred_P62942_A.csv
 ```
 The output will also be available in output/predictions/.
-```
+
 
 ## License
 Source code and model weights are licensed under the Apache Licence, Version 2.0.
