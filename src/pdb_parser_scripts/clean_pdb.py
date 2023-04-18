@@ -1,3 +1,10 @@
+#!/usr/bin/env python3
+
+#Rapid protein stability prediction, RaSP, Developed by Blaabjerg et al. 2022 doi: 10.1101/2022.07.14.500157 
+#Adapted and implemented in 2022, Kristine Degn
+#The adaptions: The function def _step_3_pdbfixer(first_model, temp3) has been updated to include one extra line 
+#               to satisfy biopython normenclature (line 74). 
+
 import argparse
 import os
 import subprocess

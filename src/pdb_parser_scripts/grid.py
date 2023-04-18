@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+
+#Rapid protein stability prediction, RaSP, Developed by Blaabjerg et al. 2022 doi: 10.1101/2022.07.14.500157 
+#Adapted and implemented in 2022, Kristine Degn
+#The adaptions: No adaptations needed from the original file. 
+
 import enum
 
 import Bio

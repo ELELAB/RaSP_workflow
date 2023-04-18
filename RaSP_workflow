@@ -3,6 +3,16 @@
 #Rapid protein stability prediction, RaSP, Developed by Blaabjerg et al. 2022 doi: 10.1101/2022.07.14.500157 
 #Adapted and implemented in 2022, Kristine Degn
 
+#This file is an adapation and combination of: 
+#   src/run_pipeline.py
+#   the code presented in the google colab (https://colab.research.google.com/github/KULL-Centre/papers/blob/main/2022/ML-ddG-Blaabjerg-et-al/RaSPLab.ipynb). 
+#   src/pdb_parser_scripts/parse_pdbs_pred.sh
+
+# Summary of changes: 
+#   Addition of argparse flags to ease the use of RaSP from the commandline including posibility of limitation on core usage
+#   File naming convention
+#   Folder structure, input and output placement of files.
+
 import argparse
 import shutil
 
