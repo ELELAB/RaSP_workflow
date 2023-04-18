@@ -1,7 +1,7 @@
 # RaSP_workflow
-See guides in docs for Bioinfo01, 03, and 04 specific installation and use guides.
+This pipeline is an adapted version of the Rapid protein stability prediction (RaSP) tool. In summary, this limited version allows the user to run RaSP from the command line keeping the naming conventions of files and allow limiting the core usage. 
 
-## RaSP - The original Tool
+## RaSP
 
 ### citation:
 ```
@@ -9,16 +9,16 @@ Rapid protein stability prediction using deep learning representations
 Lasse M. Blaabjerg, Maher M. Kassem, Lydia L. Good, Nicolas Jonsson, Matteo Cagiada, Kristoffer E. Johansson, Wouter Boomsma, Amelie Stein, Kresten Lindorff-Larsen
 bioRxiv 2022.07.14.500157; doi: https://doi.org/10.1101/2022.07.14.500157 
 ```
-The scripts to re-run the paper and data can be found at
+The scripts to re-run the paper and data can be found at:
 ```
-https://github.com/KULL-Centre/papers/tree/main/2022/ML-ddG-Blaabjerg-et-al
+https://github.com/KULL-Centre/_2022_ML-ddG-Blaabjerg
 ```
-The tool can be run directly at
+The tool can be run directly at:
 ```
 https://colab.research.google.com/github/KULL-Centre/papers/blob/main/2022/ML-ddG-Blaabjerg-et-al/RaSPLab.ipynb
 ```
 
-Below is the installation and use guides for a free standing version of RaSP:
+Below is the installation and use guides for a free standing workflow version of RaSP:
 
 ## Installation
 
@@ -177,3 +177,6 @@ e.g.:
 $ RaSP_postprocess -i output/predictions/cavity_pred_P62942_A.csv
 ```
 The output will also be available in output/predictions/.
+
+## License
+Source code and model weights are licensed under the Apache Licence, Version 2.0.
