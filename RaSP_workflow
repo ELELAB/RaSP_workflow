@@ -170,6 +170,14 @@ elif pdb_type == "FILE":
 else:
     sys.exit('ERROR: Choosen type is not supported, choose FILE, AF or PDB.')
 
+os.system(f"pdb_validate {output}/data/input/{query_protein}.pdb > {output}/data/input/quality_control.txt")
+with open(f"{output}/data/input/quality_control.txt", "r") as f:
+    lines = f.readlines()
+
+if 'It *seems* everything is OK.' not in lines:
+    print(f"There seems to be a challenge with your input PDB, see {output}/data/input/quality_control.txt for details")
+    exit(1)    
+
 os.system(f"pdb_selchain -{chain} {output}/data/input/{query_protein}.pdb | pdb_delhetatm | pdb_delres --999:0:1 | pdb_fixinsert | pdb_tidy  > {output}/data/predictions/raw/{query_protein}_{uniquechain}.pdb")
 
 pdb_input_dir = f'{output}/data/predictions/raw/'
