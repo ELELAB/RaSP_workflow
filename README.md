@@ -136,6 +136,11 @@ data, can be specified using the command -p. Per default this is
 
 ### Output
 
+If the pdb file does not fit expectations, the program will stop. 
+The spefic lines of the pdb file, that could not be read correctly is 
+listed in the file: /data/input/quality_control.txt, please update your
+input file to overcome these challenges. 
+
 After a successful run, the output files are deposited: 
 
 ```
