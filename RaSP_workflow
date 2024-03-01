@@ -87,6 +87,8 @@ from Bio.PDB.Polypeptide import index_to_one, one_to_index
 
 pdb_type = args.type
 pdb_input = args.input
+if pdb_input[-4:].upper()==".PDB":
+    pdb_input = pdb_input[:-4]
 output = args.output
 path = args.path
 sys.path.append(path)
