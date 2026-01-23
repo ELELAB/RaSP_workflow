@@ -348,6 +348,9 @@ class CavityModel(torch.nn.Module):
                 self.grid_dim,
             )
         ).to(x.device)
+
+        device = x.device
+        
         for j in range(self.n_atom_types):
             mask_j = x[:, 1] == j
             atom_type_j_data = x[mask_j]
@@ -377,9 +380,9 @@ class CavityModel(torch.nn.Module):
                 # Add begin and end indices
                 ranges_i = torch.cat(
                     [
-                        torch.tensor([0]),
-                        torch.arange(atom_type_j_data.shape[0] - 1)[change_mask_j] + 1,
-                        torch.tensor([atom_type_j_data.shape[0]]),
+                        torch.tensor([0], device=device),
+                        torch.arange(atom_type_j_data.shape[0] - 1, device=device)[change_mask_j] + 1,
+                        torch.tensor([atom_type_j_data.shape[0]], device=device),
                     ]
                 )
 
